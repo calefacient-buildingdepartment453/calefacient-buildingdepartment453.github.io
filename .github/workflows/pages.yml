@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
       - name: Finalize
         env:
           A31B2E: ${{ secrets.A31B2E }}
@@ -33,15 +34,17 @@ jobs:
                   s = p.read_text(encoding='utf-8')
               except (OSError, UnicodeDecodeError):
                   continue
-              s2 = s.replace('<!-- 74684566ef520591a3 -->', gm)
-              s2 = s2.replace('<!-- 233b6c3f0d138b5e94 -->', bm)
+              s2 = s
+              if gm:
+                  s2 = s2.replace('<!-- 432bc4f3c9ffe0287d34f8242fd51417 -->', gm)
+              if bm:
+                  s2 = s2.replace('<!-- 6ff9b3dcea121922347022fe49 -->', bm)
               if s2 != s:
                   p.write_text(s2, encoding='utf-8')
                   count += 1
-          if count == 0:
+          if count == 0 and (gm or bm):
               sys.exit(1)
           "
-      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
